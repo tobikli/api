@@ -1,14 +1,15 @@
-FROM python:3.9
+FROM alpine:latest
 
-# Set the working directory inside the container
-WORKDIR /code
+RUN apk add --no-cache python3-dev \
+    && python3 -m ensurepip \
+    && pip3 install --upgrade pip
 
-# Copy the requirements.txt file and install dependencies
-COPY ./requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+WORKDIR /app
 
-# Copy the application code into the container
-COPY ./app /code/app
+COPY . /app
 
+RUN pip3 --no-cache-dir install -r requirements.txt
 
-CMD ["fastapi", "run", "app/main.py", "--proxy-headers", "--port", "80"]
+EXPOSE 5000
+
+CMD ["python3", "app.py"]
